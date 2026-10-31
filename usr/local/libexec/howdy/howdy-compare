@@ -1,0 +1,8 @@
+#!/bin/bash
+export PATH=/usr/local/bin:/usr/bin:/bin
+/usr/local/bin/ir_bridge_run.sh >/dev/null 2>&1 &
+BPID=$!
+/usr/local/libexec/howdy/howdy-compare.real "$@"
+rc=$?
+kill $BPID 2>/dev/null
+exit $rc

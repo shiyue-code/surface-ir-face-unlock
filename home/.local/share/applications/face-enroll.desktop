@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Enroll Face
+Name[zh_CN]=录入人脸
+Comment=Enroll a face model for Howdy face unlock
+Exec=/home/sy/.local/bin/face-enroll.py
+Icon=face-smile
+Type=Application
+Categories=Settings;
