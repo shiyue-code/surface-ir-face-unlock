@@ -378,6 +378,9 @@ int main(int argc, char **argv)
     }
 
     /* ── Output format (8-bit GREY, rotated) ─────────────────────── */
+    struct v4l2_control ctrl_keep = { .id = 0x0098f900, .value = 1 };
+    ioctl(fd_out, VIDIOC_S_CTRL, &ctrl_keep);
+
     struct v4l2_format fmt_out = {0};
     fmt_out.type               = V4L2_BUF_TYPE_VIDEO_OUTPUT;
     fmt_out.fmt.pix.width      = OUT_WIDTH;

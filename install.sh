@@ -16,12 +16,13 @@ install -m644 usr/share/pam-configs/howdy /usr/share/pam-configs/
 install -m644 etc/howdy/config.ini /usr/local/etc/howdy/ 2>/dev/null || true
 
 # face enroll UI
-install -m755 home/.local/bin/face-enroll.py ~sy/.local/bin/
-install -m644 home/.local/share/applications/face-enroll.desktop ~sy/.local/share/applications/
+install -o sy -g sy -m755 home/.local/bin/face-enroll.py ~sy/.local/bin/
+install -o sy -g sy -m644 home/.local/share/applications/face-enroll.desktop ~sy/.local/share/applications/
 
 udevadm control --reload; udevadm trigger -s i2c-dev
 systemctl daemon-reload
 systemctl enable surface_ir_bridge.service
+systemctl restart surface_ir_bridge.service || true
 pam-auth-update --package || true
 
 echo "Done. Enroll with: sudo howdy add (or the 'Enroll Face' app)"

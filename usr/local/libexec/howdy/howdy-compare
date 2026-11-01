@@ -1,8 +1,15 @@
 #!/bin/bash
 export PATH=/usr/local/bin:/usr/bin:/bin
-/usr/local/bin/ir_bridge_run.sh >/dev/null 2>&1 &
-BPID=$!
+BPID=""
+if ! pgrep -x ir_bridge >/dev/null 2>&1; then
+	/usr/local/bin/ir_bridge_run.sh >/dev/null 2>&1 &
+	BPID=$!
+	for _ in 1 2 3 4 5 6 7 8 9 10; do
+		v4l2-ctl -d /dev/video42 --get-fmt-video 2>/dev/null | grep -q "480/640" && break
+		sleep 0.05
+	done
+fi
 /usr/local/libexec/howdy/howdy-compare.real "$@"
 rc=$?
-kill $BPID 2>/dev/null
+[ -n "$BPID" ] && kill $BPID 2>/dev/null
 exit $rc

@@ -43,6 +43,12 @@ for dev in /dev/media*; do
             echo "setup_ipu3: boosted exposure on $OV_SUBDEV"
         fi
 
+        # Ensure v4l2loopback keeps format across producer restarts and prime it once
+        if [ -e /dev/video42 ]; then
+            v4l2-ctl -d /dev/video42 -c keep_format=1 2>/dev/null || true
+            IR_BRIDGE_LIFETIME_SEC=1 /usr/local/bin/ir_bridge "$VIDEO_NODE" >/dev/null 2>&1 || true
+        fi
+
         echo "setup_ipu3: sensor on $dev, capture node $VIDEO_NODE"
         exit 0
     fi

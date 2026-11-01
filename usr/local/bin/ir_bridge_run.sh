@@ -1,15 +1,16 @@
 #!/bin/bash
 export PATH=/usr/local/bin:/usr/bin:/bin
 
-# ALS 自适应曝光/增益：暗环境拉满，亮环境保守
+# Surface Pro 6 环境光传感器 (in_illuminance_raw) 的 scale 为 0.001 (单位：毫勒克斯 milli-lux)
+# 20 lux = 20000, 400 lux (室内正常照明) = 400000
 ALS=$(cat /sys/bus/iio/devices/iio:device*/in_illuminance_raw 2>/dev/null | head -1)
-ALS=${ALS:-50}
-if [ "$ALS" -lt 20 ]; then
+ALS=${ALS:-50000}
+if [ "$ALS" -lt 25000 ]; then
 	GAIN=128; EXP=1500
-elif [ "$ALS" -lt 100 ]; then
-	GAIN=96;  EXP=1200
+elif [ "$ALS" -lt 450000 ]; then
+	GAIN=108; EXP=1320
 else
-	GAIN=32;  EXP=600
+	GAIN=48;  EXP=750
 fi
 
 for dev in /dev/media*; do
@@ -24,6 +25,7 @@ for dev in /dev/media*; do
 			fi
 		done
 		V=$(media-ctl -d "$dev" -e "ipu3-cio2 2")
+		v4l2-ctl -d /dev/video42 -c keep_format=1 2>/dev/null || true
 		exec /usr/local/bin/ir_bridge "$V"
 	fi
 done
